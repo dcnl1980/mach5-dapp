@@ -9,7 +9,6 @@ import userStore from "../store/modules/user";
 const server_url = window.location.hostname;
 
 export default createStore({
-    strict: false,
     state,
     mutations: {
         registerWeb3Instance (state, payload) {

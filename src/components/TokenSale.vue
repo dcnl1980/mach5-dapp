@@ -17,6 +17,11 @@
         </transition>
 
         <section class="p-6 mx-auto">
+
+        <div v-if="state">
+            <h3>Address: {{state.address}}</h3>
+            <h3>ChainId: {{state.chainId}}</h3>
+        </div>
         
         <!-- Button to connect Web3 -->
     <a v-if="ethereum==null" href="http://www.metamask.io" target="_blank"
@@ -64,8 +69,8 @@
 
   import Web3ModalVue from "web3modal-vue3"
   import WalletConnectProvider from "@walletconnect/web3-provider";
-  import {web3Modal} from "../config/mixins";
-  import {CoinbaseWalletSDK} from "@coinbase/wallet-sdk"
+  import { web3Modal } from "../config/mixins";
+  import { CoinbaseWalletSDK } from "@coinbase/wallet-sdk"
 
   export default {
     name: 'TokenSale',
@@ -232,7 +237,7 @@
     },
 
     async getSupply() {
-      await this.tokenContractObj.methods.totalSupply().call().then((result) => {
+      await this.ContractObj.methods.totalSupply().call().then((result) => {
           this.inCirculation = (result / 1e18).toFixed(0);
       })
     },
