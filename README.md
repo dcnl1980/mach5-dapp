@@ -25,3 +25,5 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 
 ### Future implementations
 https://github.com/envatic/vue3-web3modal
+https://web3modal.com/ (must integrate it)
+https://github.com/WalletConnect/web3modal (upgrade to version 2)
