@@ -7,6 +7,18 @@
         cache-provider
     />
 
+        <!-- Alert -->
+        <transition name="fade">
+        <div
+            class="z-50 fixed inset-x-0 top-0 m-auto flex items-center bg-black text-white text-md px-4 py-4 lg:w-6/6 "
+            role="alert" v-if="alertShow">
+          <p>{{ alertMsg }}</p>
+        </div>
+        </transition>
+
+        <section class="p-6 mx-auto">
+        
+        <!-- Button to connect Web3 -->
     <a v-if="ethereum==null" href="http://www.metamask.io" target="_blank"
            class="inline-flex items-center px-3 py-2 border border-transparent shadow-sm text-sm leading-4 font-medium rounded-md text-gray-200 bg-gray-900 hover:bg-gray-600 hover:text-white focus:outline-none focus:ring-1 focus:ring-offset-1 focus:ring-gray-200">
           <img class="-ml-0.5 mr-2 h-4 w-4" src="../assets/img/providers/metamask.svg">
@@ -39,8 +51,9 @@
                 @click="claimToken"
         >
           <span class="lg:block">{{ parseInt(this.claimableAmount) }} CJ</span>
-        </button>
+    </button>
 
+    </section>
 
     </div>
   </template>
@@ -163,16 +176,15 @@
       this.$store.commit('setWeb3Modal', web3modal)
       console.log("cacheProvider=>>>>", web3modal.cacheProvider);
       if (web3modal.cacheProvider) {
-        //this.connect()
-        await this.$store.dispatch("connect")
-        this.subscribeMewBlockHeaders()
+        this.connect()
       }
     })
   },
   methods: {
     // WalletConnect
     connect() {
-        this.$store.dispatch('connect')
+        this.$store.dispatch("connect")
+        //this.subscribeMewBlockHeaders()
     },
     async switchNetwork(netid) {
       this.dropdownShow = false;
@@ -185,35 +197,19 @@
       this.dropdownShow = false;
       this.networkId = networkId;
 
-      if (networkId == 1) {
-        // Ethereum MAINNET
-        this.web3Obj = new Web3(Web3.givenProvider || 'wss://mainnet.infura.io/ws/v3/6c3b2a6b260041f2804c140af1714a46');
-        this.contractAddr = "0xD006D7AB8eC86C1814365F567609c4EB4fc75497"; // Presale address
-        this.nextContractAddr = "0x7d2220fa4b36cfb02d5092c5a165356d2d585d87"; // Token address
-        this.curCoin = {sym: "ETH", icon: "../assets/img/icons/icon.png"};
-        this.totalPool = '10000000000';
-        this.minBUY = '0.01';
-      } else if (networkId == 56) {
-        // Binance Smart Chain MAINNET
-        this.web3Obj = new Web3(Web3.givenProvider || 'https://bsc-dataseed.binance.org');
-        this.contractAddr = "0x417c265AA59Eb47143B21F0489b9b527E45adEAe";
-        this.nextContractAddr = "0x5d10780da28e5b225a0c6a1bed230a04cf96ece3";
-        this.curCoin = {sym: "BNB", icon: "../assets/img/icons/bnb.png"};
-        this.totalPool = '40000000000';
-        this.minBUY = '0.1';
-      } else if (networkId == 137) {
-        // Polygon
-        this.web3Obj = new Web3(Web3.givenProvider || 'https://rpc-mainnet.matic.network');
-        this.contractAddr = "0x37ea9e2b506d14212d43270e9723fe8ba640d2fa";
-        this.nextContractAddr = "0xb8F669e7cb0D52990670C9aF7084cEE0FcBe81fe";
-        this.curCoin = {sym: "MATIC", icon: "../assets/img/icons/polygon.png"};
-        this.totalPool = '10000000000';
-        this.minBUY = '1';
-      } else {
-        // Fallback
+      if (networkId == 5) {
+        // Kovan TestNET
         this.web3Obj = new Web3(Web3.givenProvider || 'https://ropsten.infura.io/v3/6c3b2a6b260041f2804c140af1714a46');
         this.contractAddr = "0xD006D7AB8eC86C1814365F567609c4EB4fc75497";
         this.nextContractAddr = "0x7d2220fa4b36cfb02d5092c5a165356d2d585d87";
+        this.curCoin = {sym: "ETH", icon: "../assets/img/icons/icon.png"};
+        this.totalPool = '10000000000';
+        this.minBUY = '0.01';
+      } else {
+        // Fallback to MAINNET
+        this.web3Obj = new Web3(Web3.givenProvider || 'wss://mainnet.infura.io/ws/v3/6c3b2a6b260041f2804c140af1714a46');
+        this.contractAddr = "0xD006D7AB8eC86C1814365F567609c4EB4fc75497"; // Presale address
+        this.nextContractAddr = "0x7d2220fa4b36cfb02d5092c5a165356d2d585d87"; // Token address
         this.curCoin = {sym: "ETH", icon: "../assets/img/icons/icon.png"};
         this.totalPool = '10000000000';
         this.minBUY = '0.01';
@@ -222,8 +218,8 @@
       this.getBalance();
       this.contractObj = new this.web3Obj.eth.Contract(this.abi, this.contractAddr);
       this.calcPrice();
-      this.getSupply();
-      this.getPrice();
+      //this.getSupply();
+      //this.getPrice();
     },
 
     async getBalance() {
@@ -237,20 +233,8 @@
 
     async getSupply() {
       await this.nextContractObj.methods.totalSupply().call().then((result) => {
-        if (this.networkId == 137) {
           this.inCirculation = (result / 1e18).toFixed(0);
-          this.nextBurned = ('10000000000000000000000000000' - result);
-        }
-        else if (this.networkId == 56) {
-          this.inCirculation = (result / 1e18).toFixed(0);
-          this.nextBurned = (('40000000000000000000000000000' - result) / 1e18).toFixed(0);
-
-        }
-        else {
-          this.inCirculation = (result / 1e18).toFixed(0);
-          this.nextBurned = (('20000000000000000000000000000' - result) / 1e18).toFixed(0);
-        }
-      });
+      })
     },
 
     async getPrice() {
@@ -329,6 +313,7 @@
       }, 1000);
     },
 
+    // Fallback Function
     connectMetaMask: async function (param) {
       if (param == 1) {
         await window.ethereum.request({method: 'eth_requestAccounts'}).then((result) => {
@@ -336,7 +321,7 @@
           document.location.reload();
         });
       } else {
-        //console.log("here",this.$store.state.web3.coinbase)
+        console.log("here",this.$store.state.web3.coinbase)
         let params = [
           {
             from: this.$store.state.web3.coinbase,
