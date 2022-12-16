@@ -20,6 +20,11 @@ yarn build
 yarn lint
 ```
 
+### Compile smart contract
+```
+yarn hardhat compile
+```
+
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
 
