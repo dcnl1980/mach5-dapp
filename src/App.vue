@@ -1,26 +1,43 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+ <TokenSale />
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import TokenSale from './components/TokenSale.vue'
+
 
 export default {
   name: 'App',
+
   components: {
-    HelloWorld
+    TokenSale
+  },
+
+  data() {
+    return {
+    }
+  },
+
+  methods: {
+
   }
 }
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+ .btn {
+    @apply font-bold py-2 px-4 rounded;
+  }
+  .btn-blue {
+    @apply bg-blue-500 text-white;
+  }
+  .btn-blue:hover {
+    @apply bg-blue-700;
+  }
+  .btn-red {
+    @apply bg-red-500 text-white;
+  }
+  .btn-green {
+    @apply bg-green-500 text-white;
+  }
 </style>
