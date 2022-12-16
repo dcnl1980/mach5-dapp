@@ -8,7 +8,7 @@ import userStore from "../store/modules/user";
 
 const server_url = window.location.hostname;
 
-export const store = createStore({
+export default createStore({
     strict: false,
     state,
     mutations: {

@@ -52,6 +52,7 @@
   import Web3ModalVue from "web3modal-vue3"
   import WalletConnectProvider from "@walletconnect/web3-provider";
   import {web3Modal} from "../config/mixins";
+  import {CoinbaseWalletSDK} from "@coinbase/wallet-sdk"
 
   export default {
     name: 'TokenSale',
@@ -117,6 +118,12 @@
           options: {
             infuraId: "_"
           }
+        },
+        coinbasewallet: {
+            package: CoinbaseWalletSDK,
+            options: {
+                infuraId: "_"
+            }
         }
       },
       number: 0,
