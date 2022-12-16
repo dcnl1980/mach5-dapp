@@ -27,3 +27,11 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 https://github.com/envatic/vue3-web3modal
 https://web3modal.com/ (must integrate it)
 https://github.com/WalletConnect/web3modal (upgrade to version 2)
+
+### Todo
+1] Fix the store
+2] Make WalletConnect working
+3] Install hardhat
+4] Compile the contracts 
+5] Test it on Kovan network
+6] Upload to Mainnet

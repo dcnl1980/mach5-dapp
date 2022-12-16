@@ -1,13 +1,4 @@
-/**
- *Submitted for verification at Etherscan.io on 2021-01-11
-*/
-
-/**
- * Compiled with 0.6.6+commit.6c089d02
-*/
-
-// Partial License: MIT
-
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.6.0;
 
 /**
@@ -346,9 +337,9 @@ pragma solidity 0.6.6;
 
 
 
-contract ETHXPresale is Ownable {
+contract Presale is Ownable {
     using SafeMath for uint256;
-    IERC20 public ethx;
+    IERC20 public tokens;
 
     // BP
     uint256 constant BP = 10000;
@@ -369,7 +360,7 @@ contract ETHXPresale is Ownable {
 
     mapping(address => uint256) public claimable;
 
-    constructor (address addr) public { ethx = IERC20(addr); }
+    constructor (address addr) public { token = IERC20(addr); }
 
     // pause contract preventing further purchase.
     // pausing however has no effect on those who
@@ -399,8 +390,8 @@ contract ETHXPresale is Ownable {
     }
 
     function withdrawUnsold(address _addr, uint256 amount) public onlyOwner {
-        require(amount <= ethx.balanceOf(address(this)).sub(totalOwed), "insufficient balance");
-        ethx.transfer(_addr, amount);
+        require(amount <= token.balanceOf(address(this)).sub(totalOwed), "insufficient balance");
+        token.transfer(_addr, amount);
     }
 
     // start the presale
@@ -418,7 +409,7 @@ contract ETHXPresale is Ownable {
         ends = _ends;
     }
 
-    // the amount of ethx purchased
+    // the amount of tokens purchased
     function calculateAmountPurchased(uint256 _value) public view returns (uint256) {
         return _value.mul(BP).div(price).mul(1e18).div(BP);
     }
@@ -436,7 +427,7 @@ contract ETHXPresale is Ownable {
         totalOwed = totalOwed.sub(amount);
 
         // send owed tokens
-        require(ethx.transfer(msg.sender, amount), "failed to claim");
+        require(tokens.transfer(msg.sender, amount), "failed to claim");
     }
 
     // purchase tokens
@@ -447,7 +438,7 @@ contract ETHXPresale is Ownable {
         require(weiRaised.add(msg.value) < cap, "cap hit"); 
 
         uint256 amount = calculateAmountPurchased(msg.value);
-        require(totalOwed.add(amount) <= ethx.balanceOf(address(this)), "sold out");
+        require(totalOwed.add(amount) <= tokens.balanceOf(address(this)), "sold out");
         require(claimable[msg.sender].add(msg.value) <= maximum, "maximum purchase cap hit");
 
         // update user and stats:

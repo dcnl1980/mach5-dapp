@@ -60,7 +60,7 @@
   <script>
   import Web3 from 'web3'
   import PresaleJson from "../../contracts/Presale.json"
-  import NextJson from "../../contracts/Token.json"
+  import TokenJson from "../../contracts/Token.json"
 
   import Web3ModalVue from "web3modal-vue3"
   import WalletConnectProvider from "@walletconnect/web3-provider";
@@ -98,7 +98,7 @@
     return {
       web3Obj: new Web3(Web3.givenProvider || 'wss://mainnet.infura.io/ws/v3/6c3b2a6b260041f2804c140af1714a46'),
       contractObj: {},
-      nextContractObj: {},
+      tokenContractObj: {},
       price: 0,
       sendAmount: 0,
       ethereum: window.ethereum,
@@ -106,7 +106,7 @@
       contractAddr: "",
       nextContractAddr: "",
       abi: PresaleJson.abi,
-      nextAbi: NextJson.abi,
+      tokenAbi: TokenJson.abi,
       alertShow: false,
       alertMsg: "",
       networkId: "1",
@@ -201,7 +201,7 @@
         // Kovan TestNET
         this.web3Obj = new Web3(Web3.givenProvider || 'https://ropsten.infura.io/v3/6c3b2a6b260041f2804c140af1714a46');
         this.contractAddr = "0xD006D7AB8eC86C1814365F567609c4EB4fc75497";
-        this.nextContractAddr = "0x7d2220fa4b36cfb02d5092c5a165356d2d585d87";
+        this.tokenContractAddr = "0x7d2220fa4b36cfb02d5092c5a165356d2d585d87";
         this.curCoin = {sym: "ETH", icon: "../assets/img/icons/icon.png"};
         this.totalPool = '10000000000';
         this.minBUY = '0.01';
@@ -209,12 +209,12 @@
         // Fallback to MAINNET
         this.web3Obj = new Web3(Web3.givenProvider || 'wss://mainnet.infura.io/ws/v3/6c3b2a6b260041f2804c140af1714a46');
         this.contractAddr = "0xD006D7AB8eC86C1814365F567609c4EB4fc75497"; // Presale address
-        this.nextContractAddr = "0x7d2220fa4b36cfb02d5092c5a165356d2d585d87"; // Token address
+        this.tokenContractAddr = "0x7d2220fa4b36cfb02d5092c5a165356d2d585d87"; // Token address
         this.curCoin = {sym: "ETH", icon: "../assets/img/icons/icon.png"};
         this.totalPool = '10000000000';
         this.minBUY = '0.01';
       }
-      this.nextContractObj = new this.web3Obj.eth.Contract(this.nextAbi, this.nextContractAddr);
+      this.tokenContractObj = new this.web3Obj.eth.Contract(this.tokenAbi, this.tokenContractAddr);
       this.getBalance();
       this.contractObj = new this.web3Obj.eth.Contract(this.abi, this.contractAddr);
       this.calcPrice();
@@ -226,13 +226,13 @@
       await this.web3Obj.eth.getBalance(this.account).then((result) => {
         this.balance = Web3.utils.fromWei(result, 'ether');
       });
-      this.nextContractObj.methods.balanceOf(this.account).call().then((result) => {
+      this.tokenContractObj.methods.balanceOf(this.account).call().then((result) => {
         this.nextBalance = result;
       });
     },
 
     async getSupply() {
-      await this.nextContractObj.methods.totalSupply().call().then((result) => {
+      await this.tokenContractObj.methods.totalSupply().call().then((result) => {
           this.inCirculation = (result / 1e18).toFixed(0);
       })
     },
