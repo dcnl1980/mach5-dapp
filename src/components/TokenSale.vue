@@ -1,6 +1,6 @@
 <template>
     <div>
-        <web3-modal-component
+        <Web3ModalComponent
         ref="web3modal"
         :theme="theme"
         :provider-options="providerOptions"
@@ -58,6 +58,11 @@
           <span class="lg:block">{{ parseInt(this.claimableAmount) }} CJ</span>
     </button>
 
+    </section>
+
+
+    <section id="icobox" class="p-6">
+      <h2 class="text-4xl"> ICO BOX </h2>
     </section>
 
     </div>
