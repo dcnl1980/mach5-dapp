@@ -1,6 +1,6 @@
 <template>
     <div>
-        <web3-modal-vue
+        <web3-modal-component
         ref="web3modal"
         :theme="theme"
         :provider-options="providerOptions"
@@ -67,7 +67,7 @@
   import PresaleJson from "../../contracts/Presale.json"
   import TokenJson from "../../contracts/Token.json"
 
-  import Web3ModalVue from "web3modal-vue3"
+  import { Web3ModalComponent } from "web3modal-vue3"
   import WalletConnectProvider from "@walletconnect/web3-provider";
   import { web3Modal } from "../config/mixins";
   import { CoinbaseWalletSDK } from "@coinbase/wallet-sdk"
@@ -75,7 +75,7 @@
   export default {
     name: 'TokenSale',
     components: {
-        Web3ModalVue
+      Web3ModalComponent
     },
     mixins: [web3Modal],
     computed: {
