@@ -130,6 +130,8 @@
       <!-- DURING SALE -->
       <div v-else-if="!is_paused&&(networkId==1)||(networkId==96)"
            class="m-auto d-flex w-full py-6 px-4 rounded border shadow-2xl">
+        <!-- SHOW CLAIMED AMOUNT -->
+
         <!-- NO CLAIM -->
         <div v-if="claimableAmount == 0">
           <h2 class="block mb-4 px-6 font-bold text-left text-black text-xl">
@@ -182,21 +184,16 @@
           </button>
         </div>
         <!-- CLAIM -->
-        <div v-else class="bg-yellow-400 ">
+        <div v-else-if="claimableAmount != 0" class="bg-yellow-400 ">
+          <div v-if="!is_paused">
           <h1 class="text-6xl block mb-4 px-6 font-bold text-center text-black">🏅</h1>
           <h2 class="text-2xl block mb-4 px-6 font-bold text-center text-black">
             You are the owner of {{ claimableAmount.toFixed(0) }} {{ this.tokenSymbol }}
           </h2>
-          <h4 class="text-lg text-black px-6 pb-6">You can claim these tokens after the tokensale is finished.</h4>
-          <p>Or buy more tokens!</p>
-
-          Show the forum. 
-        </div>
-      </div>
-      <!-- AFTER SALE -->
-      <div v-else-if="is_paused&&(networkId==1||networkId==56||networkId==137)&&claimableAmount>0"
-           class="m-auto d-flex lg:w-2/6 bg-yellow-400 p-4 rounded .shadow-2xl">
-        <h2 class="block mb-4 px-6 font-bold text-2xl text-left text-black">
+          <h4 class="text-lg text-black px-6 pb-6 text-center">You can claim these tokens after the tokensale is finished.</h4>
+          </div>
+          <div v-else>
+          <h2 class="block mb-4 px-6 font-bold text-2xl text-left text-black">
           <img src="../assets/img/logo/nextshib.png" height="120px" width="120px" class="mx-auto py-4"/>
           CLAIM the purchased {{ this.tokenSymbol }}
         </h2>
@@ -216,7 +213,13 @@
         >
           Claim
         </button>
-      </div>
+        </div>
+        </div>
+        </div>
+    
+
+    
+     
       <!-- FALLBACK, NOT SUPPORTED NETWORK -->
       <div v-else class="m-auto d-flex w-full bg-gray-800 p-4 rounded .shadow-2xl">
         <h2 class="text-2xl block mb-4 px-6 font-bold text-left text-white" >
@@ -469,7 +472,11 @@
         if (Math.round(new Date().getTime() / 1000) < res) {
           this.showAlert("Presale has not been ended. Tokens can be claimed after the tokensale is finished.");
         } else {
-          await this.contractObj.methods.claim().send({from: this.account, gas: 300000, type: "0x2"}).then((res) => {
+          await this.contractObj.methods.claim().send(
+            {
+              from: this.account, 
+            }
+            ).then((res) => {
             console.log(res);
             document.location.reload();
           })
