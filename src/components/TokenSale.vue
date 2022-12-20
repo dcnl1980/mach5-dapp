@@ -69,6 +69,7 @@
       <p>TotalSupply: {{ this.totalSupply }}</p>
 
       <a id="tokensale"/>
+
     <div class="text-3xl text-center w-full items-center justify-center pt-12 text-black">
              Round <b>1</b> (<b>{{Math.round(this.price*1000)/1000}} CJ / {{this.curCoin.sym}}</b>)
      
@@ -76,16 +77,12 @@
         Tokensale is live!</p>
     </div>
 
-    <div v-show="is_paused">Tokensale is paused! Waiting for another round.</div>
-
-    
     <section class="py-12 lg:px-10 mx-4" v-show="!is_paused">
       
       <!-- TOKENSALE WITHOUT WEB3 WALLET -->
       <div v-if="!this.ethereum">
         <div class="max-w-6xl mx-auto" x-data="{ qr: false }">
-          <label class="block font-medium font-bold text-4xl text-center">Send ETH or BNB to The Address
-            Below</label>
+          <label class="block font-medium font-bold text-4xl text-center">Send ETH to The Address Below</label>
           <div class="my-12 relative items-center">
             <input type="text" id="address" readonly v-model="account"
                    class="p-4 h-16 text-xs sm:text-2xl md:text-3xl text-gray-800 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full pr-12 border-gray-300 rounded-md">
@@ -111,13 +108,13 @@
 
           </div>
 
-          <div x-show="qr"
+          <!-- div x-show="qr"
                class="flex justify-center max-w-6xl bg-gradient-to-b from-yellow-400 to-yellow-300 shadow-lg rounded-lg p-6 mx-auto text-center">
             <qr-code :text="account"></qr-code>
-          </div>
+          </div -->
 
 
-          <h3 class="text-lg py-4">NEXTSHIB tokens will be sent after the tokensale has been ended. No need to claim. If
+          <h3 class="text-lg py-4">CJ tokens will be sent after the tokensale has been ended. No need to claim. If
             you use a wallet, you need to claim the tokens.</h3>
 
 
@@ -133,7 +130,7 @@
         <!-- SHOW CLAIMED AMOUNT -->
 
         <!-- NO CLAIM -->
-        <div v-if="claimableAmount == 0">
+     
           <h2 class="block mb-4 px-6 font-bold text-left text-black text-xl">
             Deposit below to purchase {{ this.tokenName }} ({{ this.tokenSymbol }})
           </h2>
@@ -153,13 +150,7 @@
             <h6 class="text-sm">Receive</h6>
             <h6 class="text-sm">Balance: {{ this.nextBalance / 10**18 }}</h6>
           </div>
-
-          <div>
-
-
-  
-</div>
-
+     
 
           <div class="mt-2 flex flex-row items-center justify-between mb-6 px-6">
             <input
@@ -182,9 +173,9 @@
               
             <span v-else>BUY</span>
           </button>
-        </div>
+        
         <!-- CLAIM -->
-        <div v-else-if="claimableAmount != 0" class="bg-yellow-400 ">
+        <div v-if="claimableAmount != 0" class="bg-yellow-400 ">
           <div v-if="!is_paused">
           <h1 class="text-6xl block mb-4 px-6 font-bold text-center text-black">🏅</h1>
           <h2 class="text-2xl block mb-4 px-6 font-bold text-center text-black">
@@ -216,9 +207,7 @@
         </div>
         </div>
         </div>
-    
-
-    
+      
      
       <!-- FALLBACK, NOT SUPPORTED NETWORK -->
       <div v-else class="m-auto d-flex w-full bg-gray-800 p-4 rounded .shadow-2xl">
@@ -244,12 +233,14 @@
         <span v-if="this.curCoin.sym == 'ETH'">0.01 ETH</span>
       </div>
   
-    </section>
-
 
     </section>
+
+    </section>
+
 
     </div>
+  
   </template>
   <script>
   import Web3 from 'web3'
@@ -307,7 +298,7 @@
       alertShow: false,
       alertMsg: "",
       networkId: "1",
-      account: "",
+      account: "0xdB9D795588E8b4765271376a84C222bB310e8a6e", // fallback presale address
       is_tokensale: false,
       is_paused: false,
       nextBalance: 0,
@@ -405,8 +396,8 @@
       } else {
         // Fallback to MAINNET
         this.web3Obj = new Web3(Web3.givenProvider || 'wss://mainnet.infura.io/ws/v3/6c3b2a6b260041f2804c140af1714a46');
-        this.contractAddr = "0xD006D7AB8eC86C1814365F567609c4EB4fc75497"; // Presale address
-        this.tokenContractAddr = "0x7d2220fa4b36cfb02d5092c5a165356d2d585d87"; // Token address
+        this.contractAddr = ContractAddresses.Presale; // Presale address
+        this.tokenContractAddr = ContractAddresses.Token; // Token address
         this.curCoin = {sym: "ETH", icon: "../assets/img/icons/icon.png"};
       }
       this.tokenContractObj = new this.web3Obj.eth.Contract(this.tokenAbi, this.tokenContractAddr);
@@ -451,9 +442,9 @@
       await this.contractObj.methods.price().call().then((res) => {
         this.price = 1 / (res / 1e18);
       })
-      //await this.contractObj.methods.paused().call().then((res) => {
-      //  this.is_paused = res;
-      //})
+      await this.contractObj.methods.paused().call().then((res) => {
+        this.is_paused = res;
+      })
       await this.contractObj.methods.claimable(this.account).call().then((res) => {
         this.claimableAmount = res / 1e18;
       })

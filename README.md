@@ -54,3 +54,13 @@ Call function setMinimum  (9999000000000000) equal to 0.0099 ETH, so minimum is 
 Call function setMaximum (5000000000000000000) max 5 ETH
 Call function setCap (500000000000000000000) is 500 ETH
 Call function startPreSale(1640991600) first is max end (real capped max date)
+
+### During presale
+Call function pause(true) makes the presale on pause, preparing for another round.
+Call function pause(false) makes the pause undone.
+Call function unlock() ends the presale and make the token claimable.
+
+### End of presale
+Call function withdrawETHOwner(5000000000000000000) to withdraw 5 ETH to the owner.
+Call function withdrawETH(_addr, amount) to witdraw amount of ETH to an address.
+Call function withdrawUnsold(_addr, amount) to withdraw the unsold tokens to an address.

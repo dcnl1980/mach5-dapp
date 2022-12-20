@@ -386,7 +386,7 @@ contract Presale is Ownable {
 
     // set the date the contract will unlock.
     // capped to max end date
-    function setEnds(uint256 _ends)   public onlyOwner {
+    function setEnds(uint256 _ends) public onlyOwner {
         require(_ends <= maxEnds, "end date is capped");
         ends = _ends;
     }
@@ -447,15 +447,15 @@ contract Presale is Ownable {
     // purchase tokens
     function buy() public payable {
         //solium-disable-next-line
+        require(block.timestamp < ends, "presale has ended");
         require(!paused, "presale is paused");
         require(msg.value >= minimum, "amount too small");
         require(weiRaised.add(msg.value) < cap, "cap hit"); 
 
         uint256 amount = calculateAmountPurchased(msg.value);
         require(totalOwed.add(amount) <= token.balanceOf(address(this)), "sold out");
-        require(claimable[msg.sender].add(msg.value) <= maximum, "maximum purchase cap hit");
-
-        // update user and stats:
+      
+        // update stats
         claimable[msg.sender] = claimable[msg.sender].add(amount);
         totalOwed = totalOwed.add(amount);
         weiRaised = weiRaised.add(msg.value);

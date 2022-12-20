@@ -33,7 +33,7 @@ async function main() {
 
   console.log("Account balance:", (await deployer.getBalance()).toString());
 
-  const presale = await ethers.getContractAt("Presale", "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512");
+  const presale = await ethers.getContractAt("Presale", "0x60D8e23a80F903925B2528C05f61FFAbC09F4585");
   const setPrice = await presale.setPrice(price);
   const setMinimum = await presale.setMinimum(minBuy);
   const setMaximum = await presale.setMaximum(maxBuy);
