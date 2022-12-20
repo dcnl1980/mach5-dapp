@@ -25,6 +25,12 @@ yarn lint
 yarn hardhat compile
 ```
 
+### Deploy Smart Contract
+```
+yarn hardhat node
+yarn hardhat --network localhost run scripts/deploy.js
+```
+
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
 
@@ -34,10 +40,17 @@ https://web3modal.com/ (must integrate it)
 https://github.com/WalletConnect/web3modal (upgrade to version 2)
 
 ### Todo
-- 1] Fix the store (state.web3Modal.connect is not a function)
-- 2] Make WalletConnect working with Metamask and Coinbase wallet.
-- 3] Install hardhat
-- 4] Compile the contracts 
-- 5] Test it on Kovan network
+~~- 1] Fix the store (state.web3Modal.connect is not a function)~~
+~~- 2] Make WalletConnect working with Metamask and Coinbase wallet.~~
+~~- 3] Install hardhat~~
+~~- 4] Compile the contracts~~
+~~- 5] Deploy and test in on Localhost~~
 - 6] Test buy, presale and claim
 - 7] Upload to Mainnet
+
+### Presale parameters
+Call function setPrice (10000000000000000) equal to 0.01 ETH per token 
+Call function setMinimum  (9999000000000000) equal to 0.0099 ETH, so minimum is 1 token
+Call function setMaximum (5000000000000000000) max 5 ETH
+Call function setCap (500000000000000000000) is 500 ETH
+Call function startPreSale(1640991600) first is max end (real capped max date)
