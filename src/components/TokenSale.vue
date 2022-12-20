@@ -68,16 +68,26 @@
       <p>TokenAddress: {{ this.tokenContractAddr }}</p>
       <p>TotalSupply: {{ this.totalSupply }}</p>
 
+    
+
+    <section class="py-12 lg:px-10 mx-4">
+
       <a id="tokensale"/>
 
-    <div class="text-3xl text-center w-full items-center justify-center pt-12 text-black">
-             Round <b>1</b> (<b>{{Math.round(this.price*1000)/1000}} CJ / {{this.curCoin.sym}}</b>)
+      <div class="text-3xl text-center w-full items-center justify-center pt-12 text-black">
+         Round <b>1</b> (<b>{{Math.round(this.price*1000)/1000}} CJ / {{this.curCoin.sym}}</b>)
+ 
+      <p v-if="!is_paused" class="text-6xl font-extrabold text-black bg-clip-text bg-gradient-to-br from-yellow-300 to-yellow-600 pb-8 uppercase ">
+            Tokensale is live!</p>
      
-      <p class="text-6xl font-extrabold text-black bg-clip-text bg-gradient-to-br from-yellow-300 to-yellow-600 pb-8 uppercase ">
-        Tokensale is live!</p>
-    </div>
+      <p v-else-if="is_paused&&is_tokensale">
+          Tokensale is on pauze.
+      </p>
 
-    <section class="py-12 lg:px-10 mx-4" v-show="!is_paused">
+      <p v-else>
+          Tokensale ended!
+      </p>
+          </div>
       
       <!-- TOKENSALE WITHOUT WEB3 WALLET -->
       <div v-if="!this.ethereum">
@@ -125,43 +135,44 @@
       <!-- WEB3 WALLET --> 
       
       <!-- DURING SALE -->
-      <div v-else-if="!is_paused&&(networkId==1)||(networkId==96)"
-           class="m-auto d-flex w-full py-6 px-4 rounded border shadow-2xl">
+      <div v-else-if="(networkId==1)||(networkId==96)"
+           class="m-auto d-flex w-full py-6 px-10 rounded border shadow-2xl">
         <!-- SHOW CLAIMED AMOUNT -->
 
         <!-- NO CLAIM -->
      
-          <h2 class="block mb-4 px-6 font-bold text-left text-black text-xl">
+        <div v-show="!is_paused">
+          <h2 class="block font-bold text-left text-black text-xl">
             Deposit below to purchase {{ this.tokenName }} ({{ this.tokenSymbol }})
           </h2>
-          <div class="mt-10 flex flex-row justify-between px-6">
-            <h6 class="text-sm">Send</h6>
-            <h6 class="text-sm">Balance: {{ this.balance }}</h6>
+          <div class="mt-10 flex flex-row justify-between">
+            <h6 class="text-md">Send</h6>
+            <h6 class="text-xs text-gray-700">Balance: {{ this.balance }}</h6>
           </div>
-          <div class="mt-2 flex flex-row items-center justify-between mb-6 px-6">
+          <div class="mt-2 flex flex-row items-center justify-between">
             <input
-                class="border appearance-none font-medium text-2xl py-1 p-3 rounded w-full  mb-3 leading-tight focus:outline-none focus:shadow-outline"
+                class="border-b appearance-none font-medium text-2xl py-1 p-3 rounded w-full  mb-3 leading-tight focus:outline-none focus:shadow-outline"
                 type="text" placeholder="0" v-model="sendAmount">
             <img src="../assets/img/icons/icon.png" class="w-6 h-6 -mt-3"/>
             <label class="ml-2 font-semibold text-xl -mt-3">{{ this.curCoin.sym }}</label>
       
           </div>
-          <div class="mt-10 flex flex-row justify-between px-6">
-            <h6 class="text-sm">Receive</h6>
-            <h6 class="text-sm">Balance: {{ this.nextBalance / 10**18 }}</h6>
+          <div class="mt-10 flex flex-row justify-between">
+            <h6 class="text-md">Receive</h6>
+            <h6 class="text-xs text-gray-700">Balance: {{ this.nextBalance / 10**18 }}</h6>
           </div>
      
 
-          <div class="mt-2 flex flex-row items-center justify-between mb-6 px-6">
+          <div class="mt-2 flex flex-row items-center justify-between ">
             <input
-                class=" border appearance-none font-medium text-2xl py-1 p-3 rounded w-full mb-3 leading-tight focus:outline-none focus:shadow-outline"
+                class="border-b appearance-none font-medium text-2xl py-1 p-3 rounded w-full mb-3 leading-tight focus:outline-none focus:shadow-outline"
                 type="text" placeholder="0" readonly v-model="recvAmount">
-            <img src="../assets/img/icons/nextshib.png" class="w-6 h-6 -mt-3"/>
+            <img src="../assets/img/icons/chainjoes.png" class="w-6 h-6 -mt-3"/>
             <label class="ml-2 font-semibold text-xl -mt-3">{{ this.tokenSymbol }}</label>
 
           </div>
           <button
-              class="mx-6 w-full bg-gradient-to-r from-gray-600 via-gray-800 to-gray-500  hover:from-yellow-300 hover:to-yellow-500 hover:text-black text-white font-bold py-4 px-4 rounded focus:outline-none focus:shadow-outline"
+              class="w-full bg-gradient-to-r from-gray-600 via-gray-800 to-gray-500  hover:from-yellow-300 hover:to-yellow-500 hover:text-black text-white font-bold py-4 px-4 rounded focus:outline-none focus:shadow-outline"
               type="button"
               @click="buyToken" v-bind:disabled="sendAmount < 0.01 "
           >
@@ -173,10 +184,11 @@
               
             <span v-else>BUY</span>
           </button>
+          </div>
         
         <!-- CLAIM -->
         <div v-if="claimableAmount != 0" class="bg-yellow-400 ">
-          <div v-if="!is_paused">
+          <div v-if="is_tokensale">
           <h1 class="text-6xl block mb-4 px-6 font-bold text-center text-black">🏅</h1>
           <h2 class="text-2xl block mb-4 px-6 font-bold text-center text-black">
             You are the owner of {{ claimableAmount.toFixed(0) }} {{ this.tokenSymbol }}
@@ -190,7 +202,7 @@
         </h2>
         <div class="mt-10 flex flex-row justify-between px-6">
           <h6 class="text-sm">Claimable {{ this.tokenSymbol }}</h6>
-          <h6 class="text-sm">Balance:{{this.nextBalance}}</h6>
+          <h6 class="text-sm">Balance:{{this.nextBalance / 1e18 }}</h6>
         </div>
         <div class="mt-2 flex flex-row items-center justify-between mb-6 px-6">
           <input class="appearance-none font-medium text-2xl py-1 rounded w-full  mb-3 leading-tight focus:outline-none focus:shadow-outline" type="text" placeholder="0" v-model="claimableAmount" disabled>
@@ -235,6 +247,8 @@
   
 
     </section>
+
+   
 
     </section>
 
@@ -298,8 +312,8 @@
       alertShow: false,
       alertMsg: "",
       networkId: "1",
-      account: "0xdB9D795588E8b4765271376a84C222bB310e8a6e", // fallback presale address
-      is_tokensale: false,
+      account: "0x2579a0B2DF68B7a1FD07f033AE3553473A19c1B9", // fallback presale address
+      is_tokensale: true,
       is_paused: false,
       nextBalance: 0,
       nextBurned: 0,
@@ -445,6 +459,10 @@
       await this.contractObj.methods.paused().call().then((res) => {
         this.is_paused = res;
       })
+      await this.contractObj.methods.ends().call().then((res) => {
+        if (res == 0) this.is_tokensale = false;
+        else this.is_tokensale = true;
+      })
       await this.contractObj.methods.claimable(this.account).call().then((res) => {
         this.claimableAmount = res / 1e18;
       })
@@ -515,7 +533,7 @@
         let params = [
           {
             from: this.$store.state.web3.coinbase,
-            to: '0x22fd1B466F8883DA9376dEaC59bD8Ab299785BA7',
+            to: ContractAddresses.Token,
           },
         ];
         await window.ethereum

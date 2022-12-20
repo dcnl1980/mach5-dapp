@@ -64,3 +64,9 @@ Call function unlock() ends the presale and make the token claimable.
 Call function withdrawETHOwner(5000000000000000000) to withdraw 5 ETH to the owner.
 Call function withdrawETH(_addr, amount) to witdraw amount of ETH to an address.
 Call function withdrawUnsold(_addr, amount) to withdraw the unsold tokens to an address.
+
+### Address on Ethereum
+
+Owner: 0x2579a0B2DF68B7a1FD07f033AE3553473A19c1B9
+Token Smart Contract:
+PreSale Smart Contract:
