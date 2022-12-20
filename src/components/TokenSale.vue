@@ -65,6 +65,7 @@
       <h2 class="text-4xl"> ICO BOX </h2>
 
       <p>ContactAddress: {{ this.contractAddr }}</p>
+      <p>TokenAddress: {{ this.tokenContractAddr }}</p>
       <p>TotalSupply: {{ this.totalSupply }}</p>
 
       <a id="tokensale"/>
@@ -127,7 +128,7 @@
       <!-- WEB3 WALLET --> 
       
       <!-- DURING SALE -->
-      <div v-else-if="!is_paused&&(networkId==1)"
+      <div v-else-if="!is_paused&&(networkId==1)||(networkId==96)"
            class="m-auto d-flex w-full py-6 px-4 rounded border shadow-2xl">
         <!-- NO CLAIM -->
         <div v-if="claimableAmount == 0">
@@ -148,7 +149,7 @@
           </div>
           <div class="mt-10 flex flex-row justify-between px-6">
             <h6 class="text-sm">Receive</h6>
-            <h6 class="text-sm">Balance:{{ parseInt(this.nextBalance) }}</h6>
+            <h6 class="text-sm">Balance: {{ this.nextBalance / 10**18 }}</h6>
           </div>
 
           <div>
@@ -160,8 +161,8 @@
 
           <div class="mt-2 flex flex-row items-center justify-between mb-6 px-6">
             <input
-                class="border appearance-none font-medium text-2xl py-1 p-3 rounded w-full mb-3 leading-tight focus:outline-none focus:shadow-outline"
-                type="text" placeholder="0" v-model="recvAmount">
+                class=" border appearance-none font-medium text-2xl py-1 p-3 rounded w-full mb-3 leading-tight focus:outline-none focus:shadow-outline"
+                type="text" placeholder="0" readonly v-model="recvAmount">
             <img src="../assets/img/icons/nextshib.png" class="w-6 h-6 -mt-3"/>
             <label class="ml-2 font-semibold text-xl -mt-3">{{ this.tokenSymbol }}</label>
 
@@ -187,6 +188,9 @@
             You are the owner of {{ claimableAmount.toFixed(0) }} {{ this.tokenSymbol }}
           </h2>
           <h4 class="text-lg text-black px-6 pb-6">You can claim these tokens after the tokensale is finished.</h4>
+          <p>Or buy more tokens!</p>
+
+          Show the forum. 
         </div>
       </div>
       <!-- AFTER SALE -->
@@ -248,6 +252,7 @@
   import Web3 from 'web3'
   import PresaleJson from "../../contracts/Presale.json"
   import TokenJson from "../../contracts/Token.json"
+  import ContractAddresses from "../../contracts/contract-address.json"
 
   import { Web3ModalComponent } from "web3modal-vue3"
   import WalletConnectProvider from "@walletconnect/web3-provider";
@@ -273,6 +278,7 @@
     },
     recvAmount: {
       get() {
+        if (this.sendAmount == 0) return null;
         return (this.sendAmount * this.price).toFixed(0);
       },
       set(newVal) {
@@ -280,18 +286,17 @@
       }
     }
     },
-
     data() {
     return {
       web3Obj: new Web3(Web3.givenProvider || 'wss://mainnet.infura.io/ws/v3/6c3b2a6b260041f2804c140af1714a46'),
       contractObj: {},
       tokenContractObj: {},
       price: 0,
-      sendAmount: 0,
+      sendAmount: '',
       ethereum: window.ethereum,
       copiedTooltip: false,
       contractAddr: "",
-      nextContractAddr: "",
+      tokenContractAddr: "",
       abi: PresaleJson.abi,
       tokenAbi: TokenJson.abi,
       tokenName: 'ChainJoes',
@@ -385,23 +390,21 @@
     networkChanged(networkId) {
       this.dropdownShow = false;
       this.networkId = networkId;
+      this.totalPool = '100000000'; // 100M
+      this.minBUY = '0.01';
 
-      if (networkId == 5) {
-        // Kovan TestNET
-        this.web3Obj = new Web3(Web3.givenProvider || 'https://ropsten.infura.io/v3/6c3b2a6b260041f2804c140af1714a46');
-        this.contractAddr = "0xD006D7AB8eC86C1814365F567609c4EB4fc75497";
-        this.tokenContractAddr = "0x7d2220fa4b36cfb02d5092c5a165356d2d585d87";
+      if (networkId == 96) {
+        // HardHat
+        this.web3Obj = new Web3(Web3.givenProvider || 'https://rpc.nextsmartchain.com');
+        this.contractAddr = ContractAddresses.Presale;
+        this.tokenContractAddr = ContractAddresses.Token;
         this.curCoin = {sym: "ETH", icon: "../assets/img/icons/icon.png"};
-        this.totalPool = '10000000000';
-        this.minBUY = '0.01';
       } else {
         // Fallback to MAINNET
         this.web3Obj = new Web3(Web3.givenProvider || 'wss://mainnet.infura.io/ws/v3/6c3b2a6b260041f2804c140af1714a46');
         this.contractAddr = "0xD006D7AB8eC86C1814365F567609c4EB4fc75497"; // Presale address
         this.tokenContractAddr = "0x7d2220fa4b36cfb02d5092c5a165356d2d585d87"; // Token address
         this.curCoin = {sym: "ETH", icon: "../assets/img/icons/icon.png"};
-        this.totalPool = '10000000000';
-        this.minBUY = '0.01';
       }
       this.tokenContractObj = new this.web3Obj.eth.Contract(this.tokenAbi, this.tokenContractAddr);
       this.getBalance();
