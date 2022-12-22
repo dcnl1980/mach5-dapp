@@ -67,6 +67,6 @@ Call function withdrawUnsold(_addr, amount) to withdraw the unsold tokens to an 
 
 ### Address on Ethereum
 
-Owner: 0x2579a0B2DF68B7a1FD07f033AE3553473A19c1B9
-Token Smart Contract:
+Owner: 0xfa495994E81427ba77390C8fFC84E17693Eb89E8
+Token Smart Contract: 0x6969833c846598b937149Db19922315Fd2F8d4bC
 PreSale Smart Contract:
