@@ -69,4 +69,4 @@ Call function withdrawUnsold(_addr, amount) to withdraw the unsold tokens to an 
 
 Owner: 0xfa495994E81427ba77390C8fFC84E17693Eb89E8
 Token Smart Contract: 0x6969833c846598b937149Db19922315Fd2F8d4bC
-PreSale Smart Contract:
+PreSale Smart Contract: 0x1b598102ba2dd264011d45f84d5277d784dea88d
