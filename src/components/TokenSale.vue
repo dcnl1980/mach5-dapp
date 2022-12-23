@@ -16,30 +16,14 @@
         </div>
         </transition>
 
-        <section class="p-6 mx-auto">
+        <section class="p-6 mx-auto hidden">
 
         <div v-if="state">
             <h3>Address: {{state.address}}</h3>
             <h3>ChainId: {{state.chainId}}</h3>
         </div>
         
-        <!-- Button to connect Web3 -->
-    <a v-if="ethereum==null" href="http://www.metamask.io" target="_blank"
-           class="inline-flex items-center px-3 py-2 border border-transparent shadow-sm text-sm leading-4 font-medium rounded-md text-gray-200 bg-gray-900 hover:bg-gray-600 hover:text-white focus:outline-none focus:ring-1 focus:ring-offset-1 focus:ring-gray-200">
-          <img class="-ml-0.5 mr-2 h-4 w-4" src="../assets/img/providers/metamask.svg">
-          <span class="lg:block">Install MetaMask</span>
-        </a>
-        <button v-else-if="!account" type="button" @click="connect"
-                class="inline-flex items-center px-3 py-2 border border-transparent shadow-sm text-sm leading-4 font-medium rounded-md text-gray-200 bg-gray-900 hover:bg-gray-600 hover:text-white focus:outline-none focus:ring-1 focus:ring-offset-1 focus:ring-gray-200">
-          <img class="-ml-0.5 mr-2 h-4 w-4" src="../assets/img/providers/metamask.svg">
-          <span class="lg:block">Connect Wallet</span>
-        </button>
-        <button v-else type="button" @click="connectMetaMask(2)"
-                class="inline-flex items-center px-3 py-2 border border-transparent shadow-sm text-sm leading-4 font-medium rounded-md text-gray-200 bg-gray-900 hover:bg-gray-600 hover:text-white focus:outline-none focus:ring-1 focus:ring-offset-1 focus:ring-gray-200">
-          <img class="-ml-0.5 mr-2 h-4 w-4" src="../assets/img/providers/metamask.svg">
-          <span
-              class="lg:block">{{ this.account.substring(0, 6) + "..." + this.account.substring(this.account.length - 4, this.account.length) }}</span>
-        </button>
+        
       
 
     <div class='metamask-info'>
@@ -55,19 +39,20 @@
                 style="height:38px"
                 @click="claimToken"
         >
-          <span class="lg:block">{{ parseInt(this.claimableAmount) }} CJ</span>
+          <span class="lg:block">{{ parseInt(this.claimableAmount) }} {{ this.tokenSymbol }}</span>
     </button>
 
     </section>
 
 
     <section id="icobox" class="p-6">
+      <div class="hidden">
       <h2 class="text-4xl"> ICO BOX </h2>
 
       <p>ContactAddress: {{ this.contractAddr }}</p>
       <p>TokenAddress: {{ this.tokenContractAddr }}</p>
       <p>TotalSupply: {{ this.totalSupply }}</p>
-
+    </div>
     
 
     <section class="py-12 lg:px-10 mx-4">
@@ -75,7 +60,7 @@
       <a id="tokensale"/>
 
       <div class="text-3xl text-center w-full items-center justify-center pt-12 text-black">
-         Round <b>1</b> (<b>{{Math.round(this.price*1000)/1000}} CJ / {{this.curCoin.sym}}</b>)
+         Round <b>1</b> (<b>{{Math.round(this.price*1000)/1000}} {{ this.tokenSymbol }} / {{this.curCoin.sym}}</b>)
  
       <p v-if="!is_paused" class="text-6xl font-extrabold text-black bg-clip-text bg-gradient-to-br from-yellow-300 to-yellow-600 pb-8 uppercase ">
             Tokensale is live!</p>
@@ -124,7 +109,7 @@
           </div -->
 
 
-          <h3 class="text-lg py-4">CJ tokens will be sent after the tokensale has been ended. No need to claim. If
+          <h3 class="text-lg py-4">{{ this.tokenSymbol }} tokens will be sent after the tokensale has been ended. No need to claim. If
             you use a wallet, you need to claim the tokens.</h3>
 
 
@@ -145,7 +130,27 @@
           <h2 class="block font-bold text-left text-black text-xl">
             Deposit below to purchase {{ this.tokenName }} ({{ this.tokenSymbol }})
           </h2>
-          <div class="mt-10 flex flex-row justify-between">
+          <div class="float-right flex -mt-6">
+          <!-- Button to connect Web3 -->
+        <a v-if="ethereum==null" href="http://www.metamask.io" target="_blank"
+           class="inline-flex items-center px-3 py-2 border border-transparent shadow-sm text-sm leading-4 font-medium rounded-md text-gray-200 bg-gray-900 hover:bg-gray-600 hover:text-white focus:outline-none focus:ring-1 focus:ring-offset-1 focus:ring-gray-200">
+          <img class="-ml-0.5 mr-2 h-4 w-4" src="../assets/img/providers/metamask.svg">
+          <span class="lg:block">Install MetaMask</span>
+        </a>
+        <button v-else-if="!account" type="button" @click="connect"
+                class="inline-flex items-center px-3 py-2 border border-transparent shadow-sm text-sm leading-4 font-medium rounded-md text-gray-200 bg-gray-900 hover:bg-gray-600 hover:text-white focus:outline-none focus:ring-1 focus:ring-offset-1 focus:ring-gray-200">
+          <img class="-ml-0.5 mr-2 h-4 w-4" src="../assets/img/providers/metamask.svg">
+          <span class="lg:block">Connect Wallet</span>
+        </button>
+        <button v-else type="button" @click="connectMetaMask(2)"
+                class="inline-flex items-center px-3 py-2 border border-transparent shadow-sm text-sm leading-4 font-medium rounded-md text-gray-200 bg-gray-900 hover:bg-gray-600 hover:text-white focus:outline-none focus:ring-1 focus:ring-offset-1 focus:ring-gray-200">
+          <img class="-ml-0.5 mr-2 h-4 w-4" src="../assets/img/providers/metamask.svg">
+          <span
+              class="lg:block">{{ this.account.substring(0, 6) + "..." + this.account.substring(this.account.length - 4, this.account.length) }}</span>
+        </button>
+        </div>
+
+          <div class="mt-16 flex flex-row justify-between">
             <h6 class="text-md">Send</h6>
             <h6 class="text-xs text-gray-700">Balance: {{ this.balance }}</h6>
           </div>
@@ -153,7 +158,7 @@
             <input
                 class="border-b appearance-none font-medium text-2xl py-1 p-3 rounded w-full  mb-3 leading-tight focus:outline-none focus:shadow-outline"
                 type="text" placeholder="0" v-model="sendAmount">
-            <img src="../assets/img/icons/icon.png" class="w-6 h-6 -mt-3"/>
+            <img src="../assets/img/icons/ethereum.png" class="w-4 h-6 -mt-3"/>
             <label class="ml-2 font-semibold text-xl -mt-3">{{ this.curCoin.sym }}</label>
       
           </div>
@@ -163,20 +168,21 @@
           </div>
      
 
-          <div class="mt-2 flex flex-row items-center justify-between ">
+          <div class="mt-2 flex flex-row items-center justify-between mb-10">
             <input
                 class="border-b appearance-none font-medium text-2xl py-1 p-3 rounded w-full mb-3 leading-tight focus:outline-none focus:shadow-outline"
                 type="text" placeholder="0" readonly v-model="recvAmount">
-            <img src="../assets/img/icons/chainjoes.png" class="w-6 h-6 -mt-3"/>
+            <img src="../assets/img/icons/mach5.png" class="w-6 h-6 -mt-3"/>
             <label class="ml-2 font-semibold text-xl -mt-3">{{ this.tokenSymbol }}</label>
 
           </div>
+          
           <button
               class="w-full bg-gradient-to-r from-gray-600 via-gray-800 to-gray-500  hover:from-yellow-300 hover:to-yellow-500 hover:text-black text-white font-bold py-4 px-4 rounded focus:outline-none focus:shadow-outline"
               type="button"
               @click="buyToken" v-bind:disabled="sendAmount < 0.01 "
           >
-            <span v-if="sendAmount == 0">Please enter the amount to BUY</span>
+            <span v-if="sendAmount == 0">Enter the amount in Ethereum</span>
             <span v-else-if="sendAmount < this.minBUY ">Minimum to BUY is {{ this.minBUY }} {{
                 this.curCoin.sym
               }}</span>
@@ -237,22 +243,15 @@
       </div>
 
       <!-- CONTRIBUTION INFORMATION -->
-      <div class="max-w-6xl mx-auto pt-6 pb-6 overflow-auto text-white" v-if="!is_paused">
+      <div class="max-w-8xl mx-auto pt-6 pb-6 overflow-auto text-gray-300" v-if="!is_paused">
         Max contribution:
-        <span v-if="this.curCoin.sym == 'ETH'">1 ETH</span>
+        <span v-if="this.curCoin.sym == 'ETH'">50 ETH</span>
         <br/>
         Min contribution:
         <span v-if="this.curCoin.sym == 'ETH'">0.01 ETH</span>
       </div>
-  
-
     </section>
-
-   
-
     </section>
-
-
     </div>
   
   </template>
@@ -263,9 +262,9 @@
   import ContractAddresses from "../../contracts/contract-address.json"
 
   import { Web3ModalComponent } from "web3modal-vue3"
-  import WalletConnectProvider from "@walletconnect/web3-provider";
+  //import WalletConnectProvider from "@walletconnect/web3-provider";
+  //import { CoinbaseWalletSDK } from "@coinbase/wallet-sdk"
   import { web3Modal } from "../config/mixins";
-  import { CoinbaseWalletSDK } from "@coinbase/wallet-sdk"
 
   export default {
     name: 'TokenSale',
@@ -307,12 +306,12 @@
       tokenContractAddr: "",
       abi: PresaleJson.abi,
       tokenAbi: TokenJson.abi,
-      tokenName: 'ChainJoes',
-      tokenSymbol: 'CJ',
+      tokenName: 'Mach5',
+      tokenSymbol: 'MACH5',
       alertShow: false,
       alertMsg: "",
       networkId: "1",
-      account: "0x2579a0B2DF68B7a1FD07f033AE3553473A19c1B9", // fallback presale address
+      account: "0xfa495994E81427ba77390C8fFC84E17693Eb89E8", // fallback presale address
       is_tokensale: true,
       is_paused: false,
       nextBalance: 0,
@@ -328,18 +327,18 @@
       minBUY: 0.01,
       theme: 'light',
       providerOptions: {
-        walletconnect: {
-          package: WalletConnectProvider,
-          options: {
-            infuraId: "_"
-          }
-        },
-        coinbasewallet: {
-            package: CoinbaseWalletSDK,
-            options: {
-                infuraId: "_"
-            }
-        }
+        //walletconnect: {
+        //  package: WalletConnectProvider,
+        //  options: {
+        //    infuraId: "6c3b2a6b260041f2804c140af1714a46"
+        //  }
+        //},
+        //coinbasewallet: {
+        //    package: CoinbaseWalletSDK,
+        //    options: {
+        //        infuraId: "6c3b2a6b260041f2804c140af1714a46"
+        //    }
+        //}
       },
       number: 0,
       balance: 0
@@ -406,13 +405,13 @@
         this.web3Obj = new Web3(Web3.givenProvider || 'https://rpc.nextsmartchain.com');
         this.contractAddr = ContractAddresses.Presale;
         this.tokenContractAddr = ContractAddresses.Token;
-        this.curCoin = {sym: "ETH", icon: "../assets/img/icons/icon.png"};
+        this.curCoin = {sym: "ETH", icon: "../assets/img/icons/ethereum.png"};
       } else {
         // Fallback to MAINNET
         this.web3Obj = new Web3(Web3.givenProvider || 'wss://mainnet.infura.io/ws/v3/6c3b2a6b260041f2804c140af1714a46');
         this.contractAddr = ContractAddresses.Presale; // Presale address
         this.tokenContractAddr = ContractAddresses.Token; // Token address
-        this.curCoin = {sym: "ETH", icon: "../assets/img/icons/icon.png"};
+        this.curCoin = {sym: "ETH", icon: "../assets/img/icons/ethereum.png"};
       }
       this.tokenContractObj = new this.web3Obj.eth.Contract(this.tokenAbi, this.tokenContractAddr);
       this.getBalance();

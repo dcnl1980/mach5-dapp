@@ -49,11 +49,14 @@ https://github.com/WalletConnect/web3modal (upgrade to version 2)
 - 7] Upload to Mainnet
 
 ### Presale parameters
-Call function setPrice (10000000000000000) equal to 0.01 ETH per token 
+Call function setPrice (2000000000000000) equal to 0.002 ETH per token 
 Call function setMinimum  (9999000000000000) equal to 0.0099 ETH, so minimum is 1 token
-Call function setMaximum (5000000000000000000) max 5 ETH
-Call function setCap (500000000000000000000) is 500 ETH
-Call function startPreSale(1640991600) first is max end (real capped max date)
+Call function setMaximum (50000000000000000000) max 50 ETH
+Call function setCap (20000000000000000000000) is 20000 ETH
+Call function startPreSale(1686528000, 1677628800) first is max end (real capped max date)
+
+enddate = 1 maart 2023 = 1677628800
+maxdate = 12 juni 2023 = 1686528000
 
 ### During presale
 Call function pause(true) makes the presale on pause, preparing for another round.

@@ -1,6 +1,6 @@
 {
-  "name": "chainjoes-tokensale-dapp-new",
-  "version": "0.1.0",
+  "name": "mach5-tokensale-dapp",
+  "version": "0.1.2",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
