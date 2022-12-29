@@ -16,21 +16,16 @@
         </div>
         </transition>
 
-        <section class="p-6 mx-auto hidden">
-
-        <div v-if="state">
-            <h3>Address: {{state.address}}</h3>
-            <h3>ChainId: {{state.chainId}}</h3>
-        </div>
-        
-        
-      
+        <section class="p-6 mx-auto">
 
     <div class='metamask-info'>
      
       <p>Network: {{ this.networkId }}</p>
       <p>Account: {{ this.account }}</p>
       <p>Balance: {{ this.balance }}</p>
+      <p>Web3 Network: {{ this.web3Modal.chainId }}</p>
+      <p>Web3 Account: {{ this.web3Modal.account }}</p>
+      <p>Web3 Balance: {{ this.web3Modal.balance }}</p>
 
     </div>
 
@@ -66,7 +61,7 @@
             Tokensale is live!</p>
      
       <p v-else-if="is_paused&&is_tokensale">
-          Tokensale is on pauze.
+          Tokensale is on pause.
       </p>
 
       <p v-else>
@@ -79,7 +74,7 @@
         <div class="max-w-6xl mx-auto" x-data="{ qr: false }">
           <label class="block font-medium font-bold text-4xl text-center">Send ETH to The Address Below</label>
           <div class="my-12 relative items-center">
-            <input type="text" id="address" readonly v-model="account"
+            <input type="text" id="address" readonly v-model="coinbase"
                    class="p-4 h-16 text-xs sm:text-2xl md:text-3xl text-gray-800 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full pr-12 border-gray-300 rounded-md">
             <div class="absolute inset-y-0 right-0 flex py-1.5 pr-1.5">
               <button type="button" class="px-2" @click="copyAddress">
@@ -261,10 +256,11 @@
   import TokenJson from "../../contracts/Token.json"
   import ContractAddresses from "../../contracts/contract-address.json"
 
-  import { Web3ModalComponent } from "web3modal-vue3"
-  //import WalletConnectProvider from "@walletconnect/web3-provider";
+
+  import WalletConnectProvider from "@walletconnect/web3-provider";
   //import { CoinbaseWalletSDK } from "@coinbase/wallet-sdk"
   import { web3Modal } from "../config/mixins";
+  import { Web3ModalComponent } from "web3modal-vue3"
 
   export default {
     name: 'TokenSale',
@@ -273,7 +269,7 @@
     },
     mixins: [web3Modal],
     computed: {
-        web3() {
+    web3() {
       return this.$store.state.web3
     },
     chainId() {
@@ -308,10 +304,12 @@
       tokenAbi: TokenJson.abi,
       tokenName: 'Mach5',
       tokenSymbol: 'MACH5',
+      totalSupply: '',
       alertShow: false,
       alertMsg: "",
       networkId: "1",
-      account: "0xfa495994E81427ba77390C8fFC84E17693Eb89E8", // fallback presale address
+      account: "",
+      coinbase: "0xfa495994E81427ba77390C8fFC84E17693Eb89E8", // fallback address
       is_tokensale: true,
       is_paused: false,
       nextBalance: 0,
@@ -327,18 +325,12 @@
       minBUY: 0.01,
       theme: 'light',
       providerOptions: {
-        //walletconnect: {
-        //  package: WalletConnectProvider,
-        //  options: {
-        //    infuraId: "6c3b2a6b260041f2804c140af1714a46"
-        //  }
-        //},
-        //coinbasewallet: {
-        //    package: CoinbaseWalletSDK,
-        //    options: {
-        //        infuraId: "6c3b2a6b260041f2804c140af1714a46"
-        //    }
-        //}
+        walletconnect: {
+          package: WalletConnectProvider,
+          options: {
+            infuraId: "6c3b2a6b260041f2804c140af1714a46"
+          }
+        },
       },
       number: 0,
       balance: 0
@@ -346,13 +338,17 @@
   },
 
   created() {
-    if (window.ethereum) {
-      console.log("created---------", window.ethereum)
-      this.web3Obj.eth.getAccounts().then((result) => {
-        this.account = result[0];
+    if (typeof window.ethereum !== "undefined") {
+      console.log("Web3 enabled", window.ethereum)
+
+      //this.web3Obj.eth.getAccounts().then((result) => {
+        //if(web3Modal) {
+          //this.account = this.web3Modal.account;
+        //}
+        //else this.account = result[0]
         //this.$store.dispatch("checkMetamaskAddr", {metamask:result[0]});
-      })
-      window.ethereum.on('networkChanged', (networkId) => {
+      //})
+      window.ethereum.on('chainChanged', (networkId) => {
         this.networkChanged(networkId);
       });
       window.ethereum.on('accountsChanged', async (accounts) => {
@@ -364,7 +360,6 @@
     this.web3Obj.eth.net.getId().then((result) => {
       this.networkChanged(result)
     });
-    // WalletConnect
     if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
       this.theme = 'dark'
     }
@@ -373,11 +368,10 @@
     // WalletConnect
     this.$nextTick(async () => {
       const web3modal = this.$refs.web3modal;
-      //this.$store.dispatch("setWeb3ModalAction", web3modal)
       this.$store.commit('setWeb3Modal', web3modal)
-      console.log("cacheProvider=>>>>", web3modal.cacheProvider);
-      if (web3modal.cacheProvider) {
-        this.connect()
+      if (web3modal.cachedProvider) {
+        // Autoconnect
+        // await this.$store.dispatch("connect")
       }
     })
   },
@@ -385,7 +379,6 @@
     // WalletConnect
     connect() {
         this.$store.dispatch("connect")
-        //this.subscribeMewBlockHeaders()
     },
     async switchNetwork(netid) {
       this.dropdownShow = false;
@@ -414,7 +407,7 @@
         this.curCoin = {sym: "ETH", icon: "../assets/img/icons/ethereum.png"};
       }
       this.tokenContractObj = new this.web3Obj.eth.Contract(this.tokenAbi, this.tokenContractAddr);
-      this.getBalance();
+      //this.getBalance();
       this.contractObj = new this.web3Obj.eth.Contract(this.abi, this.contractAddr);
       this.calcPrice();
       this.getSupply();
@@ -442,7 +435,7 @@
       const result = await response.json();
       this.priceUsd = result.data.price;
     },
-
+    
     showAlert: function (msg) {
       this.alertShow = true;
       this.alertMsg = msg;
@@ -528,7 +521,8 @@
           document.location.reload();
         });
       } else {
-        console.log("here",this.$store.state.web3.coinbase)
+        // Can be removed!!!
+        console.log("here",this.$store.state.web3Modal.coinbase)
         let params = [
           {
             from: this.$store.state.web3.coinbase,
